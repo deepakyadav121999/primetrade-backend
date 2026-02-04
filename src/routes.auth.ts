@@ -8,7 +8,11 @@ import { config } from "./config";
 const router = Router();
 
 const signToken = (userId: string) =>
-  jwt.sign({ userId }, config.jwtSecret, { expiresIn: config.jwtExpiresIn });
+  jwt.sign(
+    { userId },
+    config.jwtSecret as jwt.Secret,
+    { expiresIn: config.jwtExpiresIn } as jwt.SignOptions
+  );
 
 router.post(
   "/signup",

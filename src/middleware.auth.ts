@@ -3,11 +3,11 @@ import jwt from "jsonwebtoken";
 import { config } from "./config";
 
 export interface AuthRequest extends Request {
-  userId?: string;
+  userId: string;
 }
 
 export const authMiddleware = (
-  req: AuthRequest,
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {
@@ -18,8 +18,11 @@ export const authMiddleware = (
 
   const token = authHeader.split(" ")[1];
   try {
-    const decoded = jwt.verify(token, config.jwtSecret) as { userId: string };
-    req.userId = decoded.userId;
+    const decoded = jwt.verify(
+      token as string,
+      config.jwtSecret as jwt.Secret
+    ) as unknown as { userId: string };
+    (req as AuthRequest).userId = decoded.userId;
     next();
   } catch (err) {
     return res.status(401).json({ success: false, message: "Invalid token" });
